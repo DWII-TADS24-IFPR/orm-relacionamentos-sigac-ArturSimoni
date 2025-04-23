@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('categorias', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
-            $table->doubleval('maximo_horas');
+            $table->double('maximo_horas');
             $table->timestamps();
         });
     }

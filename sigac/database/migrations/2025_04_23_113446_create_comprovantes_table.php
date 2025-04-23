@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('comprovantes', function (Blueprint $table) {
             $table->id();
-            $table->doubleval('horas');
+            $table->double('horas');
             $table->string('atividade');
             $table->timestamps();
         });

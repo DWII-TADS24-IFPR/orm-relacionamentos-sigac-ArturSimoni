@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('url');
             $table->string('descricao');
-            $table->doubleval('horas_in');
+            $table->double('horas_in');
             $table->string('status');
             $table->string('comentario');
-            $table->doubleval('horas_out');
+            $table->double('horas_out');
             $table->timestamps();
         });
     }

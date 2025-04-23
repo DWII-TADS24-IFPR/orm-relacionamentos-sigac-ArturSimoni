@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Curso;
+use App\Models\Turma;
 use Illuminate\Http\Request;
 
-class CursoController extends Controller
+class TurmaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class CursoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Curso $curso)
+    public function show(Turma $turma)
     {
         //
     }
@@ -42,7 +42,7 @@ class CursoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Curso $curso)
+    public function edit(Turma $turma)
     {
         //
     }
@@ -50,7 +50,7 @@ class CursoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Curso $curso)
+    public function update(Request $request, Turma $turma)
     {
         //
     }
@@ -58,7 +58,7 @@ class CursoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Curso $curso)
+    public function destroy(Turma $turma)
     {
         //
     }
