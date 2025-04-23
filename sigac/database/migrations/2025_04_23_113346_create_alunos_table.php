@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('cpf');
             $table->string('email');
             $table->string('senha');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('curso_id')->constrained('cursos')->onDelete('cascade');
+            $table->foreignId('turma_id')->constrained('turmas')->onDelete('cascade');
             $table->timestamps();
         });
     }

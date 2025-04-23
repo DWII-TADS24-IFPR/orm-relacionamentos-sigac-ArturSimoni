@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nome');
             $table->string('sigla');
             $table->double('total_horas');
+            $table->foreignId('nivel_id')->constrained('nivels')->onDelete('cascade');
             $table->timestamps();
         });
     }
