@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('data');
             $table->foreignId('aluno_id')->constrained('alunos')->onDelete('cascade');
             $table->foreignId('comprovante_id')->constrained('comprovantes')->onDelete('cascade');
+            $table->SoftDeletes();
             $table->timestamps();
         });
     }

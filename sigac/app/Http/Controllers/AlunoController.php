@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Aluno;
 use Illuminate\Http\Request;
 use PharIo\Manifest\Email;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AlunoController extends Controller
 {
@@ -13,7 +14,8 @@ class AlunoController extends Controller
      */
     public function index()
     {
-        //
+        $aluno = Aluno::all();
+        return view('aluno')->with('aluno',$aluno);
     }
 
     /**
