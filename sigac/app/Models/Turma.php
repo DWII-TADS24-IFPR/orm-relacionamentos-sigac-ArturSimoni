@@ -5,30 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
-class Categoria extends Model
+class Turma extends Model
 {
     use SoftDeletes;
-
-    protected $table = 'categorias';
-
+    protected $table = 'turmas';
     protected $fillable = [
-        'nome',
-        'maximo_horas',
         'curso_id',
+        'ano',
     ];
 
     public function curso()
     {
         return $this->belongsTo(Curso::class);
     }
-    public function comprovante()
+    public function aluno()
     {
-        return $this->hasMany(Comprovante::class);
+        return $this->hasMany(Aluno::class);
     }
-    public function documento()
-    {
-        return $this->hasMany(Documento::class);
-    }
-    
-
 }
