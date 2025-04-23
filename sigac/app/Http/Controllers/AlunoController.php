@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use PharIo\Manifest\Email;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
 class AlunoController extends Controller
 {
     /**
