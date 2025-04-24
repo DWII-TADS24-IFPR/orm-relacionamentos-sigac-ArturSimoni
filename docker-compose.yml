@@ -1,0 +1,61 @@
+services:
+  php-web:
+    image: php:8.2-apache
+    ports:
+      - "8080:80"
+    volumes:
+      - ./php/public:/var/www/html
+      - ./php/scripts-php:/var/www/scripts
+      - ./sigac:/var/www/html/sigac 
+    networks:
+      - php-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=aula_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: aula_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - php-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - php-network
+
+volumes:
+  mysql-data:
+
+networks:
+  php-network:
+    driver: bridge
