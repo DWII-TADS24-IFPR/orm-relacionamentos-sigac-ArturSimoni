@@ -8,6 +8,8 @@
     <title>@yield('title', 'SIGAC')</title>
 </head>
 <body>
+    @include('layouts.navbar')
+
     <div class="container">
         <h1>SIGAC - Sistema de Gerenciamento de Atividades Complementares</h1>
         @yield('content')

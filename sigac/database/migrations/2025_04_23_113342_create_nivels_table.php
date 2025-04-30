@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('nivels', function (Blueprint $table) {
             $table->id();
-            $table->nome();
+            $table->string('nome');
             $table->SoftDeletes();
             $table->timestamps();
         });
