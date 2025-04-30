@@ -13,4 +13,5 @@
     @foreach ($frutas as $frutas)
     <p>Fruta: <Strong>{{$frutas}}</strong></p>
     @endforeach
+    <x-alert type="sucess">Muito foda alek</x-alert>
 @endsection

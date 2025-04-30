@@ -14,6 +14,9 @@
         <h1>SIGAC - Sistema de Gerenciamento de Atividades Complementares</h1>
         @yield('content')
     </div>
+
+    @include('layouts.footer')
+    <x-alert type="sucess"> Parabéns você conseguiu fazer o alert funcionar</x-alert>
     
 </body>
 </html>
