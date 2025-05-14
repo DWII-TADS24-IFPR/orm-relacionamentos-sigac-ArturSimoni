@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comprovante;
+use App\Models\Aluno;
+use App\Models\Categoria;
+use App\Http\Requests\ComprovanteRequest;
 use Illuminate\Http\Request;
 
 class ComprovanteController extends Controller
@@ -12,7 +15,8 @@ class ComprovanteController extends Controller
      */
     public function index()
     {
-        //
+        $comprovantes = Comprovante::with(['aluno', 'categoria'])->paginate(10);
+        return view('comprovante.index', compact('comprovantes'));
     }
 
     /**
@@ -20,15 +24,18 @@ class ComprovanteController extends Controller
      */
     public function create()
     {
-        //
+        $categorias = Categoria::all();
+        $alunos = Aluno::all();
+        return view('comprovante.create', compact('categorias', 'alunos'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ComprovanteRequest $request)
     {
-        //
+        Comprovante::create($request->validated());
+        return redirect()->route('comprovantes.index')->with('success', 'Comprovante criado com sucesso.');
     }
 
     /**
@@ -36,7 +43,7 @@ class ComprovanteController extends Controller
      */
     public function show(Comprovante $comprovante)
     {
-        //
+        return view('comprovante.show', compact('comprovante'));
     }
 
     /**
@@ -44,15 +51,18 @@ class ComprovanteController extends Controller
      */
     public function edit(Comprovante $comprovante)
     {
-        //
+        $categorias = Categoria::all();
+        $alunos = Aluno::all();
+        return view('comprovante.edit', compact('comprovante', 'categorias', 'alunos'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Comprovante $comprovante)
+    public function update(ComprovanteRequest $request, Comprovante $comprovante)
     {
-        //
+        $comprovante->update($request->validated());
+        return redirect()->route('comprovantes.index')->with('success', 'Comprovante atualizado com sucesso.');
     }
 
     /**
@@ -60,6 +70,7 @@ class ComprovanteController extends Controller
      */
     public function destroy(Comprovante $comprovante)
     {
-        //
+        $comprovante->delete();
+        return redirect()->route('comprovantes.index')->with('success', 'Comprovante deletado com successo.');
     }
 }

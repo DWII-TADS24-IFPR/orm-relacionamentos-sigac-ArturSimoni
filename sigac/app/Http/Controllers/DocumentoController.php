@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Documento;
+use App\Models\Categoria;
+use App\Http\Requests\DocumentoRequest;
 use Illuminate\Http\Request;
 
 class DocumentoController extends Controller
@@ -12,7 +14,8 @@ class DocumentoController extends Controller
      */
     public function index()
     {
-        //
+        $documentos = Documento::all();
+        return view('documento.index', compact('documentos'));
     }
 
     /**
@@ -20,15 +23,18 @@ class DocumentoController extends Controller
      */
     public function create()
     {
-        //
+        $categorias = Categoria::all();
+
+        return view('documento.create', compact('categorias'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(DocumentoRequest $request)
     {
-        //
+        Documento::create($request->validated());
+        return redirect()->route('documentos.index')->with('success', 'Documento criado com sucesso!');
     }
 
     /**
@@ -36,7 +42,7 @@ class DocumentoController extends Controller
      */
     public function show(Documento $documento)
     {
-        //
+        return view('documento.show', compact('documento'));
     }
 
     /**
@@ -44,15 +50,17 @@ class DocumentoController extends Controller
      */
     public function edit(Documento $documento)
     {
-        //
+        $categorias = Categoria::all();
+        return view('documento.edit', compact('documento', 'categorias'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Documento $documento)
+    public function update(DocumentoRequest $request, Documento $documento)
     {
-        //
+        $documento->update($request->validated());
+        return redirect()->route('documentos.index')->with('success', 'Documento atualizado com sucesso!');
     }
 
     /**
@@ -60,6 +68,7 @@ class DocumentoController extends Controller
      */
     public function destroy(Documento $documento)
     {
-        //
+        $documento->delete();
+        return redirect()->route('documentos.index')->with('success', 'Documento excluído com sucesso!');
     }
 }
