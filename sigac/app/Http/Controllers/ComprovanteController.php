@@ -34,8 +34,11 @@ class ComprovanteController extends Controller
      */
     public function store(ComprovanteRequest $request)
     {
-        Comprovante::create($request->validated());
-        return redirect()->route('comprovantes.index')->with('success', 'Comprovante criado com sucesso.');
+          $data = $request->validated();
+    $data['user_id'] = auth()->id();
+
+    Comprovante::create($data);
+    return redirect()->route('comprovantes.index')->with('success', 'Comprovante criado com sucesso.');
     }
 
     /**

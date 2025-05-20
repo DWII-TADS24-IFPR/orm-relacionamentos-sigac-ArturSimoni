@@ -14,7 +14,7 @@ class NivelController extends Controller
     public function index()
     {
         $niveis = Nivel::all();
-        return view('nivel.index', compact('niveis'));
+        return view('niveis.index', compact('niveis'));
     }
 
     /**
@@ -22,7 +22,7 @@ class NivelController extends Controller
      */
     public function create()
     {
-        return view('nivel.create');
+        return view('niveis.create');
     }
 
     /**
@@ -39,7 +39,7 @@ class NivelController extends Controller
      */
     public function show(Nivel $nivel)
     {
-        return view('nivel.show', compact('nivel'));
+        return view('niveis.show', compact('nivel'));
     }
 
     /**
@@ -47,7 +47,7 @@ class NivelController extends Controller
      */
     public function edit(Nivel $nivel)
     {
-        return view('nivel.edit', compact('nivel'));
+        return view('niveis.edit', compact('nivel'));
     }
 
     /**

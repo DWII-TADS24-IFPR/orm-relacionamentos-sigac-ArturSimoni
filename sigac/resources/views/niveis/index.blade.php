@@ -1,42 +1,41 @@
-@include('layouts.app')
+@extends('layout.app')
 
+@section('content')
+    <div class="container">
+        <h1>Lista de Níveis</h1>
 
-@section('title', "Nivels")
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
+        <a href="{{ route('niveis.create') }}" class="btn btn-primary mb-3">Novo Nível</a>
 
-@section('contents')
-
-<table class="table table-borderless">
-
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>Larry</td>
-      <td>the Bird</td>
-      <td>@twitter</td>
-    </tr>
-  </tbody>
-</table>
-
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($niveis as $nivel)
+                    <tr>
+                        <td>{{ $nivel->id }}</td>
+                        <td>{{ $nivel->nome }}</td>
+                        <td>
+                            <a href="{{ route('niveis.edit', $nivel->id) }}" class="btn btn-warning btn-sm">Editar</a>
+                            <form action="{{ route('niveis.destroy', $nivel->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 @endsection

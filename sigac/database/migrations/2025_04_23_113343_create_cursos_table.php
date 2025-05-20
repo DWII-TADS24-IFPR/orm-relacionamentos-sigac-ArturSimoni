@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('sigla');
             $table->double('total_horas');
             $table->foreignId('nivel_id')->constrained('nivels')->onDelete('cascade');
+            $table->unsignedBigInteger('eixo_id')->nullable();
             $table->SoftDeletes();
             $table->timestamps();
         });
