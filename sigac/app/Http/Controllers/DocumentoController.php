@@ -21,21 +21,23 @@ class DocumentoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+
     public function create()
     {
-        $categorias = Categoria::all();
-
-        return view('documento.create', compact('categorias'));
+    return view('documentos.upload');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(DocumentoRequest $request)
+
+    public function store(Request $request)
     {
-        Documento::create($request->validated());
-        return redirect()->route('documentos.index')->with('success', 'Documento criado com sucesso!');
+    $request->validate([
+    'documento' => 'required|file|mimes:pdf|max:2048',
+    ]);
+    $caminho = $request->file('documento')->store('documentos',
+    'public');
     }
+
+
 
     /**
      * Display the specified resource.

@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('status');
             $table->string('comentario');
             $table->double('horas_out');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
             $table->SoftDeletes();
             $table->timestamps();
