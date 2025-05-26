@@ -1,37 +1,72 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login</title>
-    <!-- Bootstrap CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+<x-guest-layout>
+    <div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+        <div class="card shadow-lg p-4" style="max-width: 420px; width: 100%;">
+            <h2 class="text-center mb-4 fw-bold text-primary">Entrar no SIGAC</h2>
 
-<div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow-sm p-4" style="width: 100%; max-width: 400px;">
-        <h2 class="mb-4 text-center">Login</h2>
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
+            <!-- Session Status -->
+            <x-auth-session-status class="mb-3" :status="session('status')" />
 
-            <div class="mb-3">
-                <label for="email" class="form-label">E-mail</label>
-                <input id="email" type="email" name="email" class="form-control" required autofocus>
-            </div>
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
 
-            <div class="mb-3">
-                <label for="password" class="form-label">Senha</label>
-                <input id="password" type="password" name="password" class="form-control" required>
-            </div>
+                <!-- Email Address -->
+                <div class="mb-3">
+                    <x-input-label for="email" :value="__('Email')" class="form-label" />
+                    <x-text-input
+                        id="email"
+                        type="email"
+                        name="email"
+                        :value="old('email')"
+                        required
+                        autofocus
+                        autocomplete="username"
+                        placeholder="seu@email.com"
+                        class="form-control"
+                    />
+                    <x-input-error :messages="$errors->get('email')" class="form-text text-danger" />
+                </div>
 
-            <button type="submit" class="btn btn-primary w-100">Entrar</button>
-        </form>
+                <!-- Password -->
+                <div class="mb-3">
+                    <x-input-label for="password" :value="__('Senha')" class="form-label" />
+                    <x-text-input
+                        id="password"
+                        type="password"
+                        name="password"
+                        required
+                        autocomplete="current-password"
+                        placeholder="••••••••"
+                        class="form-control"
+                    />
+                    <x-input-error :messages="$errors->get('password')" class="form-text text-danger" />
+                </div>
+
+                <!-- Remember Me -->
+                <div class="form-check mb-3">
+                    <input
+                        id="remember_me"
+                        type="checkbox"
+                        name="remember"
+                        class="form-check-input"
+                    />
+                    <label for="remember_me" class="form-check-label">
+                        {{ __('Lembrar-me') }}
+                    </label>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex justify-content-between align-items-center">
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}" class="text-decoration-underline">
+                            {{ __('Esqueceu sua senha?') }}
+                        </a>
+                    @endif
+
+                    <x-primary-button class="btn btn-primary">
+                        {{ __('Entrar') }}
+                    </x-primary-button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<!-- Bootstrap JS Bundle (opcional, para componentes interativos) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+</x-guest-layout>
