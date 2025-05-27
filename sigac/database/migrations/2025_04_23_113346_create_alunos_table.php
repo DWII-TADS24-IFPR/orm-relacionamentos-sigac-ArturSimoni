@@ -5,8 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -20,6 +19,7 @@ return new class extends Migration
             $table->string('senha');
             $table->foreignId('curso_id')->constrained('cursos')->onDelete('cascade');
             $table->foreignId('turma_id')->constrained('turmas')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->SoftDeletes();
             $table->timestamps();
         });
@@ -48,7 +48,7 @@ return new class extends Migration
 //       - php-network
 //     command: >
 //       bash -c "docker-php-ext-install pdo pdo_mysql && apache2-foreground"
-  
+
 //   mysql:
 //     image: mysql:8.0
 //     environment:
@@ -60,7 +60,7 @@ return new class extends Migration
 //       - mysql-data:/var/lib/mysql
 //     networks:
 //       - php-network
-  
+
 //   phpmyadmin:
 //     image: phpmyadmin/phpmyadmin
 //     ports:

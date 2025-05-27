@@ -1,35 +1,36 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="fw-semibold fs-2 text-dark">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-5 bg-light min-vh-100">
-        <div class="container max-w-4xl">
-            <div class="card shadow-lg rounded">
-                <div class="card-body p-4">
-                    <h3 class="fs-4 fw-semibold text-dark mb-3">
-                        {{ __("Olá, você está logado!") }}
-                    </h3>
-                    <p class="text-secondary lh-base">
-                        Bem-vindo ao seu painel. Aqui você pode gerenciar suas configurações, verificar suas atividades recentes e acessar funcionalidades do sistema SIGAC.
-                    </p>
+@section('content')
+<div class="container mt-4">
+    <h2 class="mb-4">Dashboard do Aluno</h2>
 
-                    <div class="row mt-4 g-3">
-                        <div class="col-12 col-sm-6">
-                            <a href="{{ route('profile.edit') }}" class="btn btn-primary w-100">
-                                Editar Perfil
-                            </a>
-                        </div>
-                        <div class="col-12 col-sm-6">
-                            <a href="#" class="btn btn-success w-100">
-                                Ver Relatórios
-                            </a>
-                        </div>
-                    </div>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total de Declarações Enviadas</h5>
+                    <p class="display-5">{{ $totalDeclaracoes }}</p>
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+
+    <h4>Última Declaração Enviada</h4>
+    @if ($ultimaDeclaracao)
+        <div class="card">
+            <div class="card-body">
+                <p><strong>Hash:</strong> {{ $ultimaDeclaracao->hash }}</p>
+                <p><strong>Data:</strong>
+                    @if ($ultimaDeclaracao->data)
+                        {{ \Carbon\Carbon::parse($ultimaDeclaracao->data)->format('d/m/Y') }}
+                    @else
+                        Data não informada
+                    @endif
+                </p>
+            </div>
+        </div>
+    @else
+        <p class="text-muted">Nenhuma declaração enviada ainda.</p>
+    @endif
+</div>
+@endsection

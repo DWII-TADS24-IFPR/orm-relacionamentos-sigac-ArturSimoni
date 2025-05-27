@@ -25,14 +25,23 @@ class Aluno extends Model
     {
         return $this->belongsTo(Curso::class);
     }
+
     public function turma()
     {
         return $this->belongsTo(Turma::class);
     }
-    public function comprovante(){
+
+    public function comprovante()
+    {
         return $this->hasMany(Comprovante::class);
     }
-    public function declaracao(){
+
+    public function declaracao()
+    {
         return $this->hasMany(Declaracao::class);
+    }
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'aluno_role')->withTimestamps()->withPivot('deleted_at');
     }
 }

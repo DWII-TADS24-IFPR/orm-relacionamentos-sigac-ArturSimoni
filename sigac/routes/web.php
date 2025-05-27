@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\{
     AlunoController,
     CategoriaController,
@@ -11,63 +12,68 @@ use App\Http\Controllers\{
     DocumentoController,
     NivelController,
     TurmaController,
-    PainelController
+    DashboardController,
+    ProfileController
 };
 
-// Página inicial<?php
-
-use App\Http\Controllers\ProfileController;
-
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
+// Página inicial
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
+// Rotas de autenticação padrão
 require __DIR__.'/auth.php';
 
+// Rotas de login separadas para aluno e admin
+Route::middleware('guest')->group(function () {
+    // Login Aluno
+    Route::get('/login/aluno', [AuthenticatedSessionController::class, 'createAluno'])->name('login.aluno');
+    Route::post('/login/aluno', [AuthenticatedSessionController::class, 'storeAluno']);
 
-Route::get('/register', [RegisteredUserController::class, 'create'])->middleware('guest')->name('register');
-Route::post('/register', [RegisteredUserController::class, 'store'])->middleware('guest');
+    // Login Admin
+    Route::get('/login/admin', [AuthenticatedSessionController::class, 'createAdmin'])->name('login.admin');
+    Route::post('/login/admin', [AuthenticatedSessionController::class, 'storeAdmin']);
 
-// Rotas protegidas por autenticação
-Route::middleware(['auth'])->group(function () {
-    Route::get('/painel', [PainelController::class, 'index'])->name('painel');
-
-    // Recursos principais
-    Route::resource('alunos', AlunoController::class);
-    Route::resource('categorias', CategoriaController::class);
-    Route::resource('comprovantes', ComprovanteController::class);
-    Route::resource('cursos', CursoController::class);
-    Route::resource('declaracoes', DeclaracaoController::class)->parameters(['declaracoes' => 'declaracao']);
-    Route::resource('documentos', DocumentoController::class);
-    Route::resource('niveis', NivelController::class);
-    Route::resource('turmas', TurmaController::class);
-
-    // Rotas específicas
-    Route::put('/alunos/{aluno}', [AlunoController::class, 'update'])->name('alunos.update');
-    Route::get('/turmas/get/{cursoId}', [AlunoController::class, 'getTurmasByCurso'])->name('turmas.byCurso');
+    // Registro padrão e registro customizado de aluno
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'store']);
+    Route::get('/aluno/registrar', [AlunoController::class, 'showRegistroForm'])->name('aluno.registro');
+    Route::post('/aluno/registrar', [AlunoController::class, 'registrar'])->name('aluno.registrar');
 });
 
-// Arquivo de autenticação (Laravel Breeze, Jetstream, Fortify etc.)
-require __DIR__ . '/auth.php';
+// Rotas autenticadas
+Route::middleware(['auth'])->group(function () {
+    // Perfil do usuário
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
+
+    // Painel e funcionalidades do aluno
+    Route::middleware('role:aluno')->prefix('aluno')->group(function () {
+        Route::get('/painel', [AlunoController::class, 'painelAluno'])->name('painel.aluno');
+        Route::get('/solicitar-horas', [AlunoController::class, 'solicitarHoras'])->name('aluno.solicitar_horas');
+        Route::post('/solicitar-horas', [AlunoController::class, 'salvarSolicitacao'])->name('aluno.salvar_solicitacao');
+        Route::get('/declaracao', [AlunoController::class, 'gerarDeclaracao'])->name('aluno.declaracao');
+    });
+
+    // Rotas administrativas
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('verified')->name('dashboard');
+
+        Route::resources([
+            'alunos'       => AlunoController::class,
+            'categorias'   => CategoriaController::class,
+            'comprovantes' => ComprovanteController::class,
+            'cursos'       => CursoController::class,
+            'declaracoes'  => DeclaracaoController::class,
+            'documentos'   => DocumentoController::class,
+            'niveis'       => NivelController::class,
+            'turmas'       => TurmaController::class,
+        ]);
+
+        // Buscar turmas por curso (AJAX)
+        Route::get('/turmas/por-curso/{cursoId}', [AlunoController::class, 'getTurmasByCurso'])->name('turmas.byCurso');
+    });
+});

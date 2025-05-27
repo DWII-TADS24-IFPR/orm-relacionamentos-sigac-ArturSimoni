@@ -12,35 +12,64 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
-    public function create(): View
+
+    public function createAluno()
     {
-        return view('auth.login');
+        return view('auth.login-aluno');
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
-    public function store(LoginRequest $request): RedirectResponse
+    public function storeAluno(LoginRequest $request)
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        $user = Auth::user();
+        if ($user && $user->role === 'aluno') {
+            return redirect()->route('painel.aluno');
+        }
+        Auth::logout();
+        return back()->withErrors(['email' => 'Acesso permitido apenas para alunos.']);
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
+    public function createAdmin()
+    {
+        return view('auth.login-admin');
+    }
+
+    public function storeAdmin(LoginRequest $request)
+    {
+        $request->authenticate();
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+        if ($user && $user->role === 'admin') {
+            return redirect()->route('dashboard');
+        }
+        Auth::logout();
+        return back()->withErrors(['email' => 'Acesso permitido apenas para administradores.']);
+    }
+    public function store(\App\Http\Requests\Auth\LoginRequest $request)
+    {
+        $request->authenticate();
+        $request->session()->regenerate();
+
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        if ($user && $user->role === 'aluno') {
+            return redirect()->route('painel.aluno');
+        }
+        if ($user && $user->role === 'admin') {
+            return redirect()->route('dashboard');
+        }
+
+        return redirect()->intended(\App\Providers\RouteServiceProvider::HOME);
+    }
+
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect('/');

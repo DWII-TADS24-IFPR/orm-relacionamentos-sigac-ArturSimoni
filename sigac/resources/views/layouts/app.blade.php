@@ -37,7 +37,7 @@
         <!-- Page Content -->
         <main class="flex-grow-1 container-lg py-4 px-3">
             <div class="bg-white shadow rounded p-4">
-                {{ $slot }}
+                @yield('content')
             </div>
         </main>
 
