@@ -17,7 +17,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-light text-dark">
+<body class="bg-light text-dark" style="font-family: 'Figtree', sans-serif;">
 
     <div class="d-flex flex-column min-vh-100">
 
@@ -25,9 +25,9 @@
 
         <!-- Page Heading -->
         @if (isset($header))
-            <header class="bg-white shadow-sm border-bottom">
-                <div class="container-lg py-3 px-3">
-                    <h1 class="h3 fw-semibold text-primary">
+            <header class="bg-white border-bottom shadow-sm">
+                <div class="container-lg py-4 px-4">
+                    <h1 class="h4 fw-semibold text-primary mb-0">
                         {{ $header }}
                     </h1>
                 </div>
@@ -35,8 +35,8 @@
         @endif
 
         <!-- Page Content -->
-        <main class="flex-grow-1 container-lg py-4 px-3">
-            <div class="bg-white shadow rounded p-4">
+        <main class="flex-grow-1 container-lg py-5 px-4">
+            <div class="bg-white shadow rounded-4 p-4">
                 @yield('content')
             </div>
         </main>

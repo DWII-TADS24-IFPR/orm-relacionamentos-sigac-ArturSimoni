@@ -44,4 +44,8 @@ class Aluno extends Model
     {
         return $this->belongsToMany(Role::class, 'aluno_role')->withTimestamps()->withPivot('deleted_at');
     }
+    public function solicitacoesHoras()
+    {
+        return $this->hasMany(\App\Models\SolicitacaoHora::class, 'aluno_id');
+    }
 }

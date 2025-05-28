@@ -17,7 +17,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/login/admin';
+    public const HOME = '/aluno/painel';
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.

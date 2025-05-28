@@ -4,7 +4,7 @@
 <div class="container">
     <h1>Registrar-se como Aluno</h1>
 
-    <form action="{{ route('aluno.registrar.store') }}" method="POST">
+    <form action="{{ route('aluno.registrar') }}" method="POST">
         @csrf
 
         <!-- Mesmos campos de nome, cpf, email, senha... -->

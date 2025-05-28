@@ -4,20 +4,19 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
-
+    // Exibe o formulário de login do aluno
     public function createAluno()
     {
         return view('auth.login-aluno');
     }
 
+    // Processa o login do aluno
     public function storeAluno(LoginRequest $request)
     {
         $request->authenticate();
@@ -31,11 +30,13 @@ class AuthenticatedSessionController extends Controller
         return back()->withErrors(['email' => 'Acesso permitido apenas para alunos.']);
     }
 
+    // Exibe o formulário de login do admin
     public function createAdmin()
     {
         return view('auth.login-admin');
     }
 
+    // Processa o login do admin
     public function storeAdmin(LoginRequest $request)
     {
         $request->authenticate();
@@ -48,12 +49,14 @@ class AuthenticatedSessionController extends Controller
         Auth::logout();
         return back()->withErrors(['email' => 'Acesso permitido apenas para administradores.']);
     }
-    public function store(\App\Http\Requests\Auth\LoginRequest $request)
+
+    // Método padrão de login (caso alguma rota use Auth padrão)
+    public function store(LoginRequest $request)
     {
         $request->authenticate();
         $request->session()->regenerate();
 
-        $user = \Illuminate\Support\Facades\Auth::user();
+        $user = Auth::user();
 
         if ($user && $user->role === 'aluno') {
             return redirect()->route('painel.aluno');
@@ -62,9 +65,12 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('dashboard');
         }
 
-        return redirect()->intended(\App\Providers\RouteServiceProvider::HOME);
+        // Se não for aluno nem admin, faz logout e volta para login de aluno
+        Auth::logout();
+        return redirect()->route('login.aluno')->withErrors(['email' => 'Acesso não permitido.']);
     }
 
+    // Logout
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();

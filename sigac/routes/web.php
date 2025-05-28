@@ -21,9 +21,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Rotas de autenticação padrão
-require __DIR__.'/auth.php';
-
 // Rotas de login separadas para aluno e admin
 Route::middleware('guest')->group(function () {
     // Login Aluno
@@ -34,12 +31,16 @@ Route::middleware('guest')->group(function () {
     Route::get('/login/admin', [AuthenticatedSessionController::class, 'createAdmin'])->name('login.admin');
     Route::post('/login/admin', [AuthenticatedSessionController::class, 'storeAdmin']);
 
-    // Registro padrão e registro customizado de aluno
-    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store']);
+    // Registro customizado de aluno
     Route::get('/aluno/registrar', [AlunoController::class, 'showRegistroForm'])->name('aluno.registro');
     Route::post('/aluno/registrar', [AlunoController::class, 'registrar'])->name('aluno.registrar');
 });
+
+// ROTA AJAX PARA BUSCAR TURMAS POR CURSO (acessível para não autenticados)
+Route::get('/turmas/get/{cursoId}', [AlunoController::class, 'getTurmasByCurso'])->name('turmas.byCurso');
+
+// ROTA DE LOGOUT (deve estar fora dos grupos de middleware para funcionar em qualquer contexto autenticado)
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 // Rotas autenticadas
 Route::middleware(['auth'])->group(function () {
@@ -50,7 +51,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
 
-    // Painel e funcionalidades do aluno
+    // Painel e funcionalidades do aluno (restrito ao papel aluno)
     Route::middleware('role:aluno')->prefix('aluno')->group(function () {
         Route::get('/painel', [AlunoController::class, 'painelAluno'])->name('painel.aluno');
         Route::get('/solicitar-horas', [AlunoController::class, 'solicitarHoras'])->name('aluno.solicitar_horas');
@@ -58,22 +59,19 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/declaracao', [AlunoController::class, 'gerarDeclaracao'])->name('aluno.declaracao');
     });
 
-    // Rotas administrativas
+    // Rotas administrativas (restrito ao papel admin)
     Route::middleware('role:admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('verified')->name('dashboard');
 
         Route::resources([
-            'alunos'       => AlunoController::class,
-            'categorias'   => CategoriaController::class,
+            'alunos' => AlunoController::class,
+            'categorias' => CategoriaController::class,
             'comprovantes' => ComprovanteController::class,
-            'cursos'       => CursoController::class,
-            'declaracoes'  => DeclaracaoController::class,
-            'documentos'   => DocumentoController::class,
-            'niveis'       => NivelController::class,
-            'turmas'       => TurmaController::class,
+            'cursos' => CursoController::class,
+            'declaracoes' => DeclaracaoController::class,
+            'documentos' => DocumentoController::class,
+            'niveis' => NivelController::class,
+            'turmas' => TurmaController::class,
         ]);
-
-        // Buscar turmas por curso (AJAX)
-        Route::get('/turmas/por-curso/{cursoId}', [AlunoController::class, 'getTurmasByCurso'])->name('turmas.byCurso');
     });
 });

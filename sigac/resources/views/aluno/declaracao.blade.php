@@ -1,4 +1,4 @@
-@extends('layouts.navigationaluno')
+@extends('layouts.appaluno')
 
 @section('content')
 <div class="container">

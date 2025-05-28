@@ -39,7 +39,7 @@ class AlunoController extends Controller
         $user = User::create([
             'name' => $validated['nome'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['senha']),
+            'password' => Hash::make($validated['password'] ?? $validated['senha']),
             'role' => 'aluno',
         ]);
 
@@ -135,16 +135,14 @@ class AlunoController extends Controller
         return redirect()->route('alunos.index')->with('success', 'Aluno excluído com sucesso!');
     }
 
+    // AJAX: retorna turmas de um curso
     public function getTurmasByCurso($cursoId)
     {
-        try {
-            $turmas = Turma::where('curso_id', $cursoId)->get();
-            return response()->json($turmas);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Erro ao buscar turmas'], 500);
-        }
+        $turmas = Turma::where('curso_id', $cursoId)->get(['id', 'ano']);
+        return response()->json($turmas);
     }
 
+    // Painel do aluno autenticado
     public function painelAluno()
     {
         $user = Auth::user();
@@ -155,7 +153,7 @@ class AlunoController extends Controller
             request()->session()->invalidate();
             request()->session()->regenerateToken();
 
-            return redirect('/login')->with('error', 'Seu usuário não está vinculado a um aluno.');
+            return redirect('/login/aluno')->with('error', 'Seu usuário não está vinculado a um aluno.');
         }
 
         $aluno->load('solicitacoesHoras');
@@ -203,8 +201,5 @@ class AlunoController extends Controller
         ]);
 
         return $pdf->download('declaracao_complementar.pdf');
-
-
     }
 }
-//eu tentei
