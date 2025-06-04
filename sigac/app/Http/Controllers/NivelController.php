@@ -14,7 +14,7 @@ class NivelController extends Controller
     public function index()
     {
         $niveis = Nivel::all();
-        return view('niveis.index', compact('niveis'));
+        return view('nivel.index', compact('niveis'));
     }
 
     /**
@@ -22,7 +22,7 @@ class NivelController extends Controller
      */
     public function create()
     {
-        return view('niveis.create');
+        return view('nivel.create');
     }
 
     /**
@@ -31,7 +31,7 @@ class NivelController extends Controller
     public function store(NivelRequest $request)
     {
         Nivel::create($request->validated());
-        return redirect()->route('niveis.index')->with('success', 'Nível criado com sucesso!');
+        return redirect()->route('coordenador.niveis.index')->with('success', 'Nível criado com sucesso!');
     }
 
     /**
@@ -39,7 +39,7 @@ class NivelController extends Controller
      */
     public function show(Nivel $nivel)
     {
-        return view('niveis.show', compact('nivel'));
+        return view('nivel.show', compact('nivel'));
     }
 
     /**
@@ -47,7 +47,7 @@ class NivelController extends Controller
      */
     public function edit(Nivel $nivel)
     {
-        return view('niveis.edit', compact('nivel'));
+        return view('nivel.edit', compact('nivel'));
     }
 
     /**
@@ -56,7 +56,7 @@ class NivelController extends Controller
     public function update(NivelRequest $request, Nivel $nivel)
     {
         $nivel->update($request->validated());
-        return redirect()->route('niveis.index')->with('success', 'Nível atualizado com sucesso!');
+        return redirect()->route('coordenador.niveis.index')->with('success', 'Nível atualizado com sucesso!');
     }
 
     /**
@@ -65,6 +65,6 @@ class NivelController extends Controller
     public function destroy(Nivel $nivel)
     {
         $nivel->delete();
-        return redirect()->route('niveis.index')->with('success', 'Nível excluído com sucesso!');
+        return redirect()->route('coordenador.niveis.index')->with('success', 'Nível excluído com sucesso!');
     }
 }

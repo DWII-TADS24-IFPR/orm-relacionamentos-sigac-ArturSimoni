@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Curso;
 use App\Models\Nivel;
 use App\Models\Categoria;
+use App\Models\Eixo;
 use App\Http\Requests\CursoRequest;
 use Illuminate\Http\Request;
 
@@ -26,7 +27,8 @@ class CursoController extends Controller
     {
         $niveis = Nivel::all();
         $categorias = Categoria::all();
-        return view('curso.create', compact('niveis', 'categorias'));
+        $eixos = Eixo::all();
+        return view('curso.create', compact('niveis', 'categorias', 'eixos'));
     }
 
     /**
@@ -35,7 +37,7 @@ class CursoController extends Controller
     public function store(CursoRequest $request)
     {
         Curso::create($request->validated());
-        return redirect()->route('cursos.index')->with('success', 'Curso criado com sucesso!');
+        return redirect()->route('coordenador.cursos.index')->with('success', 'Curso criado com sucesso!');
     }
 
     /**
@@ -53,7 +55,8 @@ class CursoController extends Controller
     {
         $niveis = Nivel::all();
         $categorias = Categoria::all();
-        return view('curso.edit', compact('curso', 'niveis', 'categorias'));
+        $eixos = Eixo::all();
+        return view('curso.edit', compact('curso', 'niveis', 'categorias', 'eixos'));
     }
 
     /**
@@ -62,7 +65,7 @@ class CursoController extends Controller
     public function update(CursoRequest $request, Curso $curso)
     {
         $curso->update($request->validated());
-        return redirect()->route('cursos.index')->with('success', 'Curso atualizado com sucesso!');
+        return redirect()->route('coordenador.cursos.index')->with('success', 'Curso atualizado com sucesso!');
     }
 
     /**
@@ -71,6 +74,6 @@ class CursoController extends Controller
     public function destroy(Curso $curso)
     {
         $curso->delete();
-        return redirect()->route('cursos.index')->with('success', 'Curso deletado com sucesso!');
+        return redirect()->route('coordenador.cursos.index')->with('success', 'Curso deletado com sucesso!');
     }
 }

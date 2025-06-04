@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nivels', function (Blueprint $table) {
+        Schema::create('niveis', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
-            $table->SoftDeletes();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nivels');
+        Schema::dropIfExists('niveis');
     }
 };

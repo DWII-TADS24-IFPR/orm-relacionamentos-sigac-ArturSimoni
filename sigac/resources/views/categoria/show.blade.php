@@ -1,35 +1,23 @@
 
-@extends('layout.app')
-
-@section('content')
-<div class="container">
-    <h1>Detalhes da Categoria</h1>
-
-    <div class="card">
-        <div class="card-header">
-            <h5>{{ $categoria->nome }}</h5>
-        </div>
-        <div class="card-body">
-            <p><strong>Máximo de Horas:</strong> {{ $categoria->maximo_horas }}</p>
-            <p><strong>Curso:</strong> {{ $categoria->curso->nome ?? 'N/A' }}</p>
-            <p><strong>Criado em:</strong> {{ $categoria->created_at }}</p>
-            <p><strong>Atualizado em:</strong> {{ $categoria->updated_at }}</p>
-        </div>
-        <div class="card-footer">
-            <a href="{{ route('categorias.edit', $categoria->id) }}" class="btn btn-warning">Editar</a>
-            <form action="{{ route('categorias.destroy', $categoria->id) }}" method="POST" style="display:inline;">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir esta categoria?');">Excluir</button>
-            </form>
-            <a href="{{ route('categorias.index') }}" class="btn btn-secondary">Voltar</a>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Detalhes da Categoria') }}
+        </h2>
+    </x-slot>
+    <div class="py-12">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <h2 class="text-2xl font-bold mb-2">{{ $categoria->nome }}</h2>
+                    <p><strong>Máximo de Horas:</strong> {{ $categoria->maximo_horas }}</p>
+                    <p><strong>Curso:</strong> {{ $categoria->curso->nome ?? '-' }}</p>
+                    <div class="mt-4 flex gap-2">
+                        <a href="{{ route('coordenador.categorias.edit', $categoria->id) }}" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Editar</a>
+                        <a href="{{ route('coordenador.categorias.index') }}" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">Voltar</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    @if(session('success'))
-        <div class="alert alert-success mt-3">
-            {{ session('success') }}
-        </div>
-    @endif
-</div>
-@endsection
+</x-app-layout>

@@ -14,7 +14,7 @@ class DocumentoRequest extends FormRequest
     public function rules()
     {
         return [
-            'url' => 'required|url',
+            'url' => 'nullable|string|max:255',
             'descricao' => 'required|string|max:255',
             'horas_in' => 'required|numeric|min:0',
             'status' => 'required|string|max:50',

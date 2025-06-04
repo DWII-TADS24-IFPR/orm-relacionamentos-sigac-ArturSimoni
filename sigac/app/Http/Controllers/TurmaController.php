@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Turma;
 use App\Models\Curso;
+use App\Models\Aluno;
+use App\Models\HorasCumpridas;
 use App\Http\Requests\TurmaRequest;
 use Illuminate\Http\Request;
 
@@ -34,7 +36,7 @@ class TurmaController extends Controller
     public function store(TurmaRequest $request)
     {
         Turma::create($request->validated());
-        return redirect()->route('turmas.index')->with('success', 'Turma criada com sucesso!');
+        return redirect()->route('coordenador.turmas.index')->with('success', 'Turma criada com sucesso!');
     }
 
     /**
@@ -60,7 +62,7 @@ class TurmaController extends Controller
     public function update(TurmaRequest $request, Turma $turma)
     {
         $turma->update($request->validated());
-        return redirect()->route('turmas.index')->with('success', 'Turma atualizada com sucesso!');
+        return redirect()->route('coordenador.turmas.index')->with('success', 'Turma atualizada com sucesso!');
     }
 
     /**
@@ -69,6 +71,22 @@ class TurmaController extends Controller
     public function destroy(Turma $turma)
     {
         $turma->delete();
-        return redirect()->route('turmas.index')->with('success', 'Turma excluída com sucesso!');
+        return redirect()->route('coordenador.turmas.index')->with('success', 'Turma excluída com sucesso!');
+    }
+
+    /**
+     * Display a graph of hours completed by students in a class.
+     */
+    public function graficoHoras($turmaId)
+    {
+        $alunos = Aluno::where('turma_id', $turmaId)->with(['horasCumpridas' => function($q) {
+            $q->where('status', 'Aprovado');
+        }])->get();
+        $labels = $alunos->pluck('nome');
+        $horas = $alunos->map(function($aluno) {
+            return $aluno->horasCumpridas->sum('horas');
+        });
+        $turma = \App\Models\Turma::find($turmaId);
+        return view('turma.grafico_horas', compact('alunos', 'labels', 'horas', 'turma'));
     }
 }

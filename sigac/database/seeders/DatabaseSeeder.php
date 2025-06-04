@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Aluno;
-use App\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,16 +13,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-             Aluno::create([
-                 'nome' => 'João Silva',
-                 'cpf' => '12345678911',
-                 'email' => 'test@example.com',
-                 'senha' => '1234',
+        $this->call(NivelSeeder::class);
+        $this->call(EixoSeeder::class);
+        $this->call(CursoSeeder::class);
+        $this->call(CategoriaSeeder::class);
+        $this->call(DocumentoSeeder::class);
+        $this->call(TurmaSeeder::class);
+        $this->call(AlunoSeeder::class);
+        $this->call(ComprovanteSeeder::class);
+        $this->call(DeclaracaoSeeder::class);
+        $this->call(RoleSeeder::class);
 
-             ]);
-             Role::create([
-                'titulo' => 'Aluno']);
-             
+
+
+
     }
-    //$user->role()->attach(1);
 }

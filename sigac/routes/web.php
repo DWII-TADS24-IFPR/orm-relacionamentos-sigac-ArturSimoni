@@ -1,77 +1,79 @@
 <?php
 
+use App\Http\Controllers\AlunoController;
+use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\ComprovanteController;
+use App\Http\Controllers\CursoController;
+use App\Http\Controllers\DeclaracaoController;
+use App\Http\Controllers\DocumentoController;
+use App\Http\Controllers\NivelController;
+use App\Http\Controllers\TurmaController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AlunoDashboardController;
+use App\Http\Controllers\CoordenadorDashboardController;
+use App\Http\Controllers\EixoController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\{
-    AlunoController,
-    CategoriaController,
-    ComprovanteController,
-    CursoController,
-    DeclaracaoController,
-    DocumentoController,
-    NivelController,
-    TurmaController,
-    DashboardController,
-    ProfileController
-};
+use Illuminate\Support\Facades\Auth;
 
-// Página inicial
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Rotas de login separadas para aluno e admin
-Route::middleware('guest')->group(function () {
-    // Login Aluno
-    Route::get('/login/aluno', [AuthenticatedSessionController::class, 'createAluno'])->name('login.aluno');
-    Route::post('/login/aluno', [AuthenticatedSessionController::class, 'storeAluno']);
+Route::get('/dashboard', function () {
+    if (Auth::check()) {
+        $user = Auth::user();
+        if ($user->role) { // Verifique se a role existe
+            if ($user->role->nome === 'aluno') {
+                return redirect()->route('aluno.dashboard');
+            } elseif ($user->role->nome === 'coordenador') {
+                return redirect()->route('coordenador.dashboard');
+            }
+        }
+    }
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-    // Login Admin
-    Route::get('/login/admin', [AuthenticatedSessionController::class, 'createAdmin'])->name('login.admin');
-    Route::post('/login/admin', [AuthenticatedSessionController::class, 'storeAdmin']);
-
-    // Registro customizado de aluno
-    Route::get('/aluno/registrar', [AlunoController::class, 'showRegistroForm'])->name('aluno.registro');
-    Route::post('/aluno/registrar', [AlunoController::class, 'registrar'])->name('aluno.registrar');
+Route::middleware(['auth', 'verified', 'role:aluno'])->prefix('aluno')->name('aluno.')->group(function () {
+    Route::get('/dashboard', [AlunoDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/documentos/create', [\App\Http\Controllers\DocumentoController::class, 'createAluno'])->name('documentos.create');
+    Route::post('/documentos', [\App\Http\Controllers\DocumentoController::class, 'storeAluno'])->name('documentos.store');
+    Route::get('/declaracao/pdf', [\App\Http\Controllers\AlunoDeclaracaoController::class, 'gerarDeclaracao'])->name('declaracao.pdf');
 });
 
-// ROTA AJAX PARA BUSCAR TURMAS POR CURSO (acessível para não autenticados)
-Route::get('/turmas/get/{cursoId}', [AlunoController::class, 'getTurmasByCurso'])->name('turmas.byCurso');
+Route::middleware(['auth', 'verified', 'role:coordenador'])->prefix('coordenador')->name('coordenador.')->group(function () {
+    Route::get('/dashboard', [CoordenadorDashboardController::class, 'index'])->name('dashboard');
+    Route::resource('alunos', AlunoController::class);
+    Route::resource('categorias', CategoriaController::class);
+    Route::resource('comprovantes', ComprovanteController::class);
+    Route::resource('cursos', CursoController::class);
 
-// ROTA DE LOGOUT (deve estar fora dos grupos de middleware para funcionar em qualquer contexto autenticado)
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+// Tive que adicionar o parameters pois o laravel estava puxando a URL 'Declaracoes/declaraco' em vez de 'Declaracoes/declaracao'
+// Não sei o motivo disso ヽ(#`Д´)ﾉ
+    Route::resource('declaracoes', DeclaracaoController::class)->parameters(['declaracoes' => 'declaracao']);
 
-// Rotas autenticadas
-Route::middleware(['auth'])->group(function () {
-    // Perfil do usuário
-    Route::prefix('profile')->group(function () {
-        Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
-        Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    });
+    Route::resource('documentos', DocumentoController::class);
 
-    // Painel e funcionalidades do aluno (restrito ao papel aluno)
-    Route::middleware('role:aluno')->prefix('aluno')->group(function () {
-        Route::get('/painel', [AlunoController::class, 'painelAluno'])->name('painel.aluno');
-        Route::get('/solicitar-horas', [AlunoController::class, 'solicitarHoras'])->name('aluno.solicitar_horas');
-        Route::post('/solicitar-horas', [AlunoController::class, 'salvarSolicitacao'])->name('aluno.salvar_solicitacao');
-        Route::get('/declaracao', [AlunoController::class, 'gerarDeclaracao'])->name('aluno.declaracao');
-    });
+// Aconteceu o mesmo com o Niveis, o laravel estava puxando a URL 'Niveis/nive' em vez de 'Niveis/nivel'
+// Ainda não sei o motivo disso ヽ(#`Д´)ﾉ
+    Route::resource('niveis', NivelController::class)->parameters(['niveis' => 'nivel']);
 
-    // Rotas administrativas (restrito ao papel admin)
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('verified')->name('dashboard');
+    Route::resource('turmas', TurmaController::class);
+    Route::resource('eixos', EixoController::class);
 
-        Route::resources([
-            'alunos' => AlunoController::class,
-            'categorias' => CategoriaController::class,
-            'comprovantes' => ComprovanteController::class,
-            'cursos' => CursoController::class,
-            'declaracoes' => DeclaracaoController::class,
-            'documentos' => DocumentoController::class,
-            'niveis' => NivelController::class,
-            'turmas' => TurmaController::class,
-        ]);
-    });
+    Route::put('/alunos/{aluno}', [AlunoController::class, 'update'])->name('alunos.update');
+    Route::get('/turmas/get/{cursoId}', [AlunoController::class, 'getTurmasByCurso'])->name('turmas.byCurso');
+    Route::post('documentos/{documento}/aprovar', [DocumentoController::class, 'aprovar'])->name('documentos.aprovar');
+    Route::post('documentos/{documento}/reprovar', [DocumentoController::class, 'reprovar'])->name('documentos.reprovar');
+    Route::get('turmas/{turma}/grafico-horas', [TurmaController::class, 'graficoHoras'])->name('turmas.grafico_horas');
+
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+
+
+require __DIR__.'/auth.php';

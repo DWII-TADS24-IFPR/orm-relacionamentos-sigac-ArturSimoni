@@ -1,30 +1,20 @@
-
-@extends('layout.app')
-
-@section('content')
-<div class="container">
-
-    <div class="card">
-        <div class="card-header">
-            <h3>{{ $nivel->nome }}</h5>
-        </div>
-        <div class="card-body">
-            <h3>Cursos</h3>
-            <ul>
-                @foreach($nivel->curso as $curso)
-                    <li>Curso: {{ $curso->nome }}</li>
-                @endforeach
-            </ul>
-        </div>
-        <div class="card-footer">
-            <a href="{{ route('niveis.edit', $nivel->id) }}" class="btn btn-primary">Editar</a>
-            <form action="{{ route('niveis.destroy', $nivel->id) }}" method="POST" style="display:inline;">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger">Excluir</button>
-            </form>
-            <a href="{{ route('niveis.index') }}" class="btn btn-secondary">Voltar</a>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Detalhes do Nível') }}
+        </h2>
+    </x-slot>
+    <div class="py-12">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <h2 class="text-2xl font-bold mb-2">{{ $nivel->nome }}</h2>
+                    <div class="mt-4 flex gap-2">
+                        <a href="{{ route('coordenador.niveis.edit', $nivel->id) }}" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Editar</a>
+                        <a href="{{ route('coordenador.niveis.index') }}" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">Voltar</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-@endsection
+</x-app-layout>

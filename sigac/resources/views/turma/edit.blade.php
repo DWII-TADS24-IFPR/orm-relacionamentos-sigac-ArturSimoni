@@ -1,45 +1,55 @@
 
-@extends('layout.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Editar Turma') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="container">
-    <h1>Editar Turma</h1>
+    <div class="py-12">
+        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    @if (session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
+                    <form action="{{ route('coordenador.turmas.update', $turma->id) }}" method="POST" class="space-y-4">
+                        @csrf
+                        @method('PUT')
+
+                        <div>
+                            <label for="ano" class="block text-sm font-medium">Ano</label>
+                            <input type="text" name="ano" id="ano" value="{{ old('ano', $turma->ano) }}" class="mt-1 block w-full rounded border-gray-300 dark:bg-gray-700 dark:text-gray-100" required>
+                            @error('ano')
+                                <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="curso_id" class="block text-sm font-medium">Curso</label>
+                            <select name="curso_id" id="curso_id" class="mt-1 block w-full rounded border-gray-300 dark:bg-gray-700 dark:text-gray-100">
+                                <option value="">Selecione um curso</option>
+                                @foreach ($cursos as $curso)
+                                    <option value="{{ $curso->id }}" {{ $turma->curso_id == $curso->id ? 'selected' : '' }}>
+                                        {{ $curso->nome }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('curso_id')
+                                <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Atualizar</button>
+                            <a href="{{ route('coordenador.turmas.index') }}" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-    @endif
-
-    <form action="{{ route('turmas.update', $turma->id) }}" method="POST">
-        @csrf
-        @method('PUT')
-
-        <div class="mb-3">
-            <label for="curso_id" class="form-label">Curso</label>
-            <select name="curso_id" id="curso_id" class="form-select @error('curso_id') is-invalid @enderror">
-                <option value="">Selecione um curso</option>
-                @foreach ($cursos as $curso)
-                    <option value="{{ $curso->id }}" {{ $turma->curso_id == $curso->id ? 'selected' : '' }}>
-                        {{ $curso->nome }}
-                    </option>
-                @endforeach
-            </select>
-            @error('curso_id')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="mb-3">
-            <label for="ano" class="form-label">Ano</label>
-            <input type="number" name="ano" id="ano" class="form-control @error('ano') is-invalid @enderror" value="{{ old('ano', $turma->ano) }}">
-            @error('ano')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <button type="submit" class="btn btn-primary">Atualizar</button>
-        <a href="{{ route('turmas.index') }}" class="btn btn-secondary">Cancelar</a>
-    </form>
-</div>
-@endsection
+    </div>
+</x-app-layout>

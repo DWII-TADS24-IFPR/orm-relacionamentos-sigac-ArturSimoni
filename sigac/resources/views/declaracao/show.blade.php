@@ -1,36 +1,24 @@
 
-@extends('layout.app')
-
-@section('content')
-<div class="container">
-    <h1>Detalhes da Declaração</h1>
-
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <div class="card">
-        <div class="card-header">
-            Declaração #{{ $declaracao->id }}
-        </div>
-        <div class="card-body">
-            <p><strong>Hash:</strong> {{ $declaracao->hash }}</p>
-            <p><strong>Data:</strong> {{ $declaracao->data }}</p>
-            <p><strong>Aluno:</strong> {{ $declaracao->aluno->nome }}</p>
-            <p><strong>Comprovante:</strong> {{ $declaracao->comprovante->atividade }}</p>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Detalhes da Declaração') }}
+        </h2>
+    </x-slot>
+    <div class="py-12">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <h2 class="text-2xl font-bold mb-2">Hash: {{ $declaracao->hash }}</h2>
+                    <p><strong>Data:</strong> {{ $declaracao->data }}</p>
+                    <p><strong>Aluno:</strong> {{ $declaracao->aluno->nome ?? '-' }}</p>
+                    <p><strong>Comprovante:</strong> {{ $declaracao->comprovante->atividade ?? '-' }}</p>
+                    <div class="mt-4 flex gap-2">
+                        <a href="{{ route('coordenador.declaracoes.edit', $declaracao->id) }}" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Editar</a>
+                        <a href="{{ route('coordenador.declaracoes.index') }}" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">Voltar</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="mt-3">
-        <a href="{{ route('declaracoes.edit', $declaracao->id) }}" class="btn btn-primary">Editar</a>
-        <form action="{{ route('declaracoes.destroy', $declaracao->id) }}" method="POST" style="display:inline;">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-danger">Excluir</button>
-        </form>
-        <a href="{{ route('declaracoes.index') }}" class="btn btn-secondary">Voltar</a>
-    </div>
-</div>
-@endsection
+</x-app-layout>

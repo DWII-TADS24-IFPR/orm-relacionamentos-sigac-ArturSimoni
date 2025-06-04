@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('comprovantes', function (Blueprint $table) {
             $table->id();
-            $table->double('horas');
+            $table->integer('horas');
             $table->string('atividade');
-            $table->foreignId('aluno_id')->constrained('alunos')->onDelete('cascade');
-            $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
-            $table->SoftDeletes();
+            $table->unsignedBigInteger('categoria_id');
+            $table->foreign('categoria_id')->references('id')->on('categorias')->onDelete('cascade');
+            $table->unsignedBigInteger('aluno_id');
+            $table->foreign('aluno_id')->references('id')->on('alunos')->onDelete('cascade');
+            $table->integer('user_id')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

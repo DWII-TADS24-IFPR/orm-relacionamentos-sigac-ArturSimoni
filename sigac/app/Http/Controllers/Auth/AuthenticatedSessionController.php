@@ -7,75 +7,39 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
-    // Exibe o formulário de login do aluno
-    public function createAluno()
+    /**
+     * Display the login view.
+     */
+    public function create(): View
     {
-        return view('auth.login-aluno');
+        return view('auth.login');
     }
 
-    // Processa o login do aluno
-    public function storeAluno(LoginRequest $request)
-    {
-        $request->authenticate();
-        $request->session()->regenerate();
-
-        $user = Auth::user();
-        if ($user && $user->role === 'aluno') {
-            return redirect()->route('painel.aluno');
-        }
-        Auth::logout();
-        return back()->withErrors(['email' => 'Acesso permitido apenas para alunos.']);
-    }
-
-    // Exibe o formulário de login do admin
-    public function createAdmin()
-    {
-        return view('auth.login-admin');
-    }
-
-    // Processa o login do admin
-    public function storeAdmin(LoginRequest $request)
+    /**
+     * Handle an incoming authentication request.
+     */
+    public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
+
         $request->session()->regenerate();
 
-        $user = Auth::user();
-        if ($user && $user->role === 'admin') {
-            return redirect()->route('dashboard');
-        }
-        Auth::logout();
-        return back()->withErrors(['email' => 'Acesso permitido apenas para administradores.']);
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
-    // Método padrão de login (caso alguma rota use Auth padrão)
-    public function store(LoginRequest $request)
-    {
-        $request->authenticate();
-        $request->session()->regenerate();
-
-        $user = Auth::user();
-
-        if ($user && $user->role === 'aluno') {
-            return redirect()->route('painel.aluno');
-        }
-        if ($user && $user->role === 'admin') {
-            return redirect()->route('dashboard');
-        }
-
-        // Se não for aluno nem admin, faz logout e volta para login de aluno
-        Auth::logout();
-        return redirect()->route('login.aluno')->withErrors(['email' => 'Acesso não permitido.']);
-    }
-
-    // Logout
+    /**
+     * Destroy an authenticated session.
+     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
 
         return redirect('/');

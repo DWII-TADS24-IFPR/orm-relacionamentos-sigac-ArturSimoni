@@ -1,37 +1,23 @@
-@extends('layout.app')
-
-@section('content')
-<div class="container">
-    <h1>Detalhes do Comprovante</h1>
-
-    <div class="card">
-        <div class="card-header">
-            Comprovante #{{ $comprovante->id }}
-        </div>
-        <div class="card-body">
-            <p><strong>Horas:</strong> {{ $comprovante->horas }}</p>
-            <p><strong>Atividade:</strong> {{ $comprovante->atividade }}</p>
-            <p><strong>Categoria:</strong> {{ $comprovante->categoria->nome }}</p>
-            <p><strong>Aluno:</strong> {{ $comprovante->aluno->nome }}</p>
-            <p><strong>Criado em:</strong> {{ $comprovante->created_at }}</p>
-            <p><strong>Atualizado em:</strong> {{ $comprovante->updated_at }}</p>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Detalhes do Comprovante') }}
+        </h2>
+    </x-slot>
+    <div class="py-12">
+        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <h2 class="text-2xl font-bold mb-2">{{ $comprovante->atividade }}</h2>
+                    <p><strong>Horas:</strong> {{ $comprovante->horas }}</p>
+                    <p><strong>Categoria:</strong> {{ $comprovante->categoria->nome ?? '-' }}</p>
+                    <p><strong>Aluno:</strong> {{ $comprovante->aluno->nome ?? '-' }}</p>
+                    <div class="mt-4 flex gap-2">
+                        <a href="{{ route('coordenador.comprovantes.edit', $comprovante->id) }}" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Editar</a>
+                        <a href="{{ route('coordenador.comprovantes.index') }}" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">Voltar</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="mt-3">
-        <a href="{{ route('comprovantes.edit', $comprovante->id) }}" class="btn btn-primary">Editar</a>
-        <form action="{{ route('comprovantes.destroy', $comprovante->id) }}" method="POST" class="d-inline">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-danger">Excluir</button>
-        </form>
-        <a href="{{ route('comprovantes.index') }}" class="btn btn-secondary">Voltar</a>
-    </div>
-
-    @if (session('success'))
-        <div class="alert alert-success mt-3">
-            {{ session('success') }}
-        </div>
-    @endif
-</div>
-@endsection
+</x-app-layout>

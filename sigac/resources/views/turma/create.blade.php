@@ -1,47 +1,52 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Nova Turma') }}
+        </h2>
+    </x-slot>
 
-@extends('layout.app')
+    <div class="py-12">
+        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    @if (session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
 
-@section('content')
-<div class="container">
-    <h1>Criar Turma</h1>
+                    <form action="{{ route('coordenador.turmas.store') }}" method="POST" class="space-y-4">
+                        @csrf
+                        @method('POST')
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+                        <div>
+                            <label for="ano" class="block text-sm font-medium">Ano</label>
+                            <input type="text" name="ano" id="ano" value="{{ old('ano') }}" class="mt-1 block w-full rounded border-gray-300 dark:bg-gray-700 dark:text-gray-100" required>
+                            @error('ano')
+                                <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-    <form action="{{ route('turmas.store') }}" method="POST">
-        @csrf
-        @method('POST')
+                        <div>
+                            <label for="curso_id" class="block text-sm font-medium">Curso</label>
+                            <select name="curso_id" id="curso_id" class="mt-1 block w-full rounded border-gray-300 dark:bg-gray-700 dark:text-gray-100">
+                                <option value="">Selecione um curso</option>
+                                @foreach ($cursos as $curso)
+                                    <option value="{{ $curso->id }}">{{ $curso->nome }}</option>
+                                @endforeach
+                            </select>
+                            @error('curso_id')
+                                <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-        <div class="mb-3">
-            <label for="curso_id" class="form-label">Curso</label>
-            <select name="curso_id" id="curso_id" class="form-select @error('curso_id') is-invalid @enderror">
-                <option value="">Selecione um curso</option>
-                @foreach ($cursos as $curso)
-                    <option value="{{ $curso->id }}">{{ $curso->nome }}</option>
-                @endforeach
-            </select>
-            @error('curso_id')
-                <div class="invalid-feedback">
-                    {{ $message }}
+                        <div class="flex gap-2">
+                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Criar</button>
+                            <a href="{{ route('coordenador.turmas.index') }}" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500">Cancelar</a>
+                        </div>
+                    </form>
                 </div>
-            @enderror
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label for="ano" class="form-label">Ano</label>
-            <input type="number" name="ano" id="ano" class="form-control @error('ano') is-invalid @enderror" value="{{ old('ano') }}">
-            @error('ano')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-            @enderror
-        </div>
-
-        <button type="submit" class="btn btn-primary">Criar Turma</button>
-        <a href="{{ route('turmas.index') }}" class="btn btn-secondary">Cancelar</a>
-    </form>
-</div>
-@endsection
+    </div>
+</x-app-layout>

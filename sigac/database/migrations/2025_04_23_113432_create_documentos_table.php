@@ -15,12 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('url');
             $table->string('descricao');
-            $table->double('horas_in');
+            $table->float('horas_in');
             $table->string('status');
             $table->string('comentario');
-            $table->double('horas_out');
-            $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
-            $table->SoftDeletes();
+            $table->float('horas_out');
+            $table->unsignedBigInteger('categoria_id');
+            $table->foreign('categoria_id')->references('id')->on('categorias')->onDelete('cascade');
+            $table->integer('user_id')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

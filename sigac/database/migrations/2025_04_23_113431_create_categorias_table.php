@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -14,9 +15,10 @@ return new class extends Migration
         Schema::create('categorias', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
-            $table->double('maximo_horas');
-            $table->foreignId('curso_id')->constrained('cursos')->onDelete('cascade');
-            $table->SoftDeletes();
+            $table->integer('maximo_horas');
+            $table->unsignedBigInteger('curso_id');
+            $table->foreign('curso_id')->references('id')->on('cursos')->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
